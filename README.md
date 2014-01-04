@@ -141,10 +141,61 @@ The HTML goes like this:
 
 ````
 
-Save this file in templates/listings.html and open this file locally
+Save this file in `templates/listings.html` and open this file locally
 on your browser. You should see a nicely displayed page.
 
 Presenting Flask
 -----------------
+_tag: flask0_ 
 
-So, normally we would continue writing HTML files
+So, normally we would continue writing HTML files with working static
+links, but browsing a filesystem is not the best thing we can do with
+the browser. So, we will write our simplest web server.
+
+First, we will set up a python virtual environment. I suggest you
+install `virtualenvwrapper` and `pip`. Now write:
+
+    $ mkvirtualenv flask-tutorial
+    $ pip install flask
+
+Flask will be installed to you. Now, we'll write our web app. Call it
+`tutorial.py` or any other name (except `flask.py`)
+
+````python
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/blog/')
+def blog_listings():
+    return render_template('listings.html')
+
+app.debug = True
+app.run()
+````
+
+This code defines an app, creates the route, and responds with our
+template to the route. Then it starts. 
+
+Now, let's run this
+
+    $ python tutorial.py
+
+If you open http://localhost:5000 you will see a 404 page. That's
+expected, since we're not reading the route to it. Now open
+http://localhost:5000/blog and WOW! Now this looks beautiful.
+
+Flask automatically serves what's inside a static folder
+statically. So it's serving the CSS correctly. But there's a small
+issue. Our CSS link can be easily broken if we get to another path. So
+we'll make it an absolute link. 
+
+Change the CSS file link to `/static/css/foundation.css`. Open the
+page again to test it. If everything is ok, we'll move on. 
+
+Clicking on any Read More link will make us get a 404 page. That's
+ok too. But we'll now fix that.
+
+
+
+
