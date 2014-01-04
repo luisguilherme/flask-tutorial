@@ -36,21 +36,17 @@ them beautifully.
 So, we'll create two folders on our root structure: templates and
 static. 
 
-<code>
-$ mkdir flask-topdown
-$ cd flask-topdown
-$ mkdir templates
-$ mkdir static
-</code>
+    $ mkdir flask-topdown
+    $ cd flask-topdown
+    $ mkdir templates
+    $ mkdir static
 
 Inside static we'll unzip Zurb's Foundation. Get to http://getbootstrap.com
 and download bootstrap. 
 
-<code>
-$ wget http://foundation.zurb.com/cdn/releases/foundation-5.0.2.zip
-$ cd static
-$ unzip ../foundation-5.0.2.zip
-</code>
+    $ wget http://foundation.zurb.com/cdn/releases/foundation-5.0.2.zip
+    $ cd static
+    $ unzip ../foundation-5.0.2.zip
 
 We'll create a multi-user blog (not a single-user microblog, because
 that is easier and everywhere). So, the first thing we'll do is to
