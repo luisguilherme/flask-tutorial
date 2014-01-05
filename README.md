@@ -196,6 +196,65 @@ page again to test it. If everything is ok, we'll move on.
 Clicking on any Read More link will make us get a 404 page. That's
 ok too. But we'll now fix that.
 
+Presenting Jinja2 and variable routing
+--------------------------------------
+_tag: jinja0_
 
+Jinja2 is a templating language completely backwards compatible what
+it templates. So the HTML code we've written is not only HTML, but
+also a Jinja2 template. 
+
+Jinja uses `{{` and `}}` to print results of a python computation and
+``{%`` and ``%}`` to run a test, or other python code. It's almost as
+easy as that: write python code inside the brackets, and have fun. 
+
+We'll write the article template, using a Jinja2 nice function. So,
+create ``templates/article.html`` with these contents:
+
+````html
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog | Article</title>
+    <link rel="stylesheet" href="/static/css/foundation.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+	<div class="small-10 small-centered medium-7 large-6 columns">
+          <h1>Article</h1>
+      
+	  {{ lipsum() }}
+
+	  <a href="/blog/">Back to blog</a>
+	</div>
+      </div>
+    </div>
+  </body>
+</html>
+````
+
+If you click on Read More you will still get a 404. That's because we
+must get the route to the article. Let's go.
+
+````python
+@app.route('/blog/<slug>/')
+def blog_post(slug):
+    return render_template('article.html')
+````
+
+Add this code right below the one that creates the route for the
+listings. The code inside ``<>`` is caught by the server as a
+variable, and sent to the method as a parameter. We are not using that
+yet, but we will soon. 
+
+Let's also make our blog template smaller by changing all paragraphs
+for ``{{ lipsum(1) }}``
+
+Now we have a fully functional mock, with the listings page and the
+article page. However, blogs have more than 5 articles, so let's do
+some more pages.
 
 
