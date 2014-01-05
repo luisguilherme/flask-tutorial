@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}| Article{% endblock%}
+{% block contents %}
+      <div class="row">
+	<div class="small-10 small-centered medium-7 large-6 columns">
+          <h1>Article</h1>
+      
+	  {{ lipsum() }}
+
+	  <a href="/blog/">Back to blog</a>
+	</div>
+      </div>
+{% endblock %}
+

@@ -253,8 +253,61 @@ yet, but we will soon.
 Let's also make our blog template smaller by changing all paragraphs
 for ``{{ lipsum(1) }}``
 
+Notice that we have some repeated code in our templates. So we'll
+extract them to a base HTML file
+
+````html
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/foundation.css" />
+  </head>
+  <body>
+    <div class="container">
+      {% block contents %}{% endblock %}
+    </div>
+  </body>
+</html>
+````
+
+We define blocks inside a base template. This blocks can have content
+inside, and this content is overriden if a child template defines that
+same block. 
+
+Let's show the new ``article.html`` template now:
+
+````html
+{% extends "base.html" %}
+{% block title %}| Article{% endblock%}
+{% block contents %}
+      <div class="row">
+	<div class="small-10 small-centered medium-7 large-6 columns">
+          <h1>Article</h1>
+      
+	  {{ lipsum() }}
+
+	  <a href="/blog/">Back to blog</a>
+	</div>
+      </div>
+{% endblock %}
+````
+
+You can do the same work to ``listings.html``.
+
 Now we have a fully functional mock, with the listings page and the
 article page. However, blogs have more than 5 articles, so let's do
 some more pages.
 
+Real work
+---------
 
+We wrote no more than two mock HTML templates and about 10 lines of
+python code. We have no auto-generated code (except for our front-end
+library, foundation), and we already have lots of things. This is, for
+me, the beauty of Flask. No boilerplate, no code you don't know where
+it came. 
+
+Now we will extract more power from it. 
