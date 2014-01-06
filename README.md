@@ -311,3 +311,128 @@ me, the beauty of Flask. No boilerplate, no code you don't know where
 it came. 
 
 Now we will extract more power from it. 
+
+We want to have paginated listings. They will be different from our
+normal views for they won't feature a promoted article. 
+
+First, we will think of our urls. After reading about SEO, I think the
+best strategy is to go with ``page/N``
+
+So, we'll redefine our route for blog listings:
+
+````python
+@app.route('/blog/', defaults={'page':1})
+@app.route('/blog/page/<int:page>')
+def blog_page(page):
+    return render_template('listings.html', page=page)
+````
+
+We added a new route that defines a parameter. The `int:` before the
+parameter name makes the router assert it's an integer in order to
+accept that route. To make things work with our default listings page,
+we set a ``defaults`` map with all the parameters that route doesn't
+define. Finally, we pass ``page`` as a parameter to our template.
+
+Now let's show our new template. Lots of things have been changed, and
+I will walk you through them:
+
+````html
+{% extends "base.html" %}
+{% block title %}| Welcome {% endblock %}
+{% block contents %}
+      <div class="row">
+	<div class="small-12 columns">
+          <h1>Welcome to my blog</h1>
+	</div>
+      </div>
+      
+      <div class="row">
+	{% set app = 5 if page == 1 else 6 %}
+	{% for n in range(app) %}
+	{% if page == 1 and loop.first %}
+	<div class="large-8 columns">
+	  <h2 class="subheader">Article Major</h2>
+	{# </div> #}
+	{% else %}
+	<div class="medium-6 large-4 columns">
+	  <h2 class="subheader">Article Minor</h2>
+	{% endif %}
+	  {{ lipsum(2 if page == 1 and loop.first else 1) }}
+	  <p><a href="{{ url_for('blog_post', slug='article') }}">Read more</a></p>
+	</div>
+	{% if loop.revindex0 is divisibleby 3 %}
+	<div class="clearfix show-for-large-only"></div>
+	{% endif %}
+	{% if loop.revindex0 is divisibleby 2 %}
+	<div class="clearfix show-for-medium-only"></div>
+	{% endif %}
+	{% endfor %}
+      </div>
+
+      <div class="row">
+	{% if page > 1 %}
+	<a class="button left" href="{{ url_for('blog_page', page=page-1) }}">
+	  &laquo; Previous page
+	</a>
+	{% endif %}
+	<a class="button right" href="{{ url_for('blog_page', page=page+1) }}">
+	  Next page &raquo; 
+	</a>
+      </div>
+{% endblock %}
+````
+
+First things first. And the first new thing we have here is: 
+
+    {% set app = 5 if page == 1 else 6 %}
+
+We are setting a template variable (articles per page, or ``app``) as
+5 if ``page`` is 1 and 6 otherwise. ``page`` is the template parameter
+we defined in our app. 
+
+    {% for n in range(app) %}
+
+This is a no-brainer if you are a python coder. (You could even add a
+``:`` after the ``for`` definition if you wanted). We will repeat
+that part of the template ``app'` times. 
+
+    {% if page == 1 and loop.first %}
+
+Jinja defines a special object called ``loop`` with several
+information about your loop. ``loop.first`` answers ``True`` if this
+is the first iteration. We will display the featured article first if
+this is the first page.
+
+     {# </div> #}
+
+This is just for my auto-indenter not become crazy with an unclosed
+div. ``{#`` is a template comment and does not get evaluated.
+
+     {{ url_for('blog_post', slug='article') }}
+
+``url_for`` is a Flask method that reverses routes to find an
+URL. This will generate a link for our method ``blog_post`` with the
+slug parameter set as ``article``. 
+
+     {% if loop.revindex0 is divisibleby 3 %}
+
+I've already talked about ``loop``. ``revindex`` and ``revindex0`` are
+methods that return the reverse index (how many iterations to the end)
+of our loop, 1 or 0 based respectively. We also have ``index`` and
+``index0``, so you will never need to enumerate your loops by hand. 
+
+The Jinja keyword ``is`` represents we are doing a test. And
+``divisibleby`` is a Jinja-defined test that tests whether a number is
+divisible by other. We are testing this to add clear floats after each
+ended column (you should have noticed some design flaws after we
+started to use auto-generated text). 
+
+At the end of the file we use these concepts to make two pagination
+links, one to the next page, other to the previous (present only when
+``page`` is bigger than 1). 
+
+Notice how Jinja is loveable. It "just works". Try something there. If
+you know python, it will probably work. ``url_for`` is also a reason
+to love Flask. Your links are nothing more than your app method calls
+in a different syntax.
+
